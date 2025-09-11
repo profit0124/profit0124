@@ -21,8 +21,30 @@ if (!Array.isArray(options)) {
   process.exit(1);
 }
 
+// 상단에 추가
+const PROPERTY_NAME = "기술스택"; // 필요 시 환경변수로 조정
+
+async function preflight(databaseId, notion) {
+  // DB 조회 (ID/권한 검증)
+  const info = await notion.databases.retrieve({ database_id: databaseId });
+  const title = info.title?.[0]?.plain_text ?? "(no title)";
+  console.log(`🔎 DB 확인: ${databaseId} | title="${title}"`);
+
+  // 속성 존재 여부
+  const prop = info.properties[PROPERTY_NAME];
+  if (!prop) {
+    console.warn(`⚠️ "${PROPERTY_NAME}" 속성이 없음 → 이번 업데이트에서 생성됩니다.`);
+  } else if (prop.type !== "multi_select") {
+    console.warn(`⚠️ "${PROPERTY_NAME}"는 '${prop.type}' 타입 → 'multi_select'로 변경됩니다.`);
+  }
+}
+
+
 async function syncDatabase(databaseId) {
   try {
+
+    await preflight(databaseId, notion)
+    
     await notion.databases.update({
       database_id: databaseId,
       properties: {
