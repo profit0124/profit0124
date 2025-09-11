@@ -25,36 +25,43 @@ if (!Array.isArray(options)) {
 const PROPERTY_NAME = "기술스택"; // 필요 시 환경변수로 조정
 
 async function preflight(databaseId, notion) {
-  // DB 조회 (ID/권한 검증)
-  const info = await notion.databases.retrieve({ database_id: databaseId });
-  const title = info.title?.[0]?.plain_text ?? "(no title)";
-  console.log(`🔎 DB 확인: ${databaseId} | title="${title}"`);
+  try {
+    // DB 조회 (ID/권한 검증)
+    const info = await notion.databases.retrieve({ database_id: databaseId });
+    const title = info.title?.[0]?.plain_text ?? "(no title)";
+    console.log(`🔎 DB 확인: ${databaseId} | title="${title}"`);
 
-  // 속성 존재 여부
-  const prop = info.properties[PROPERTY_NAME];
-  if (!prop) {
-    console.warn(`⚠️ "${PROPERTY_NAME}" 속성이 없음 → 이번 업데이트에서 생성됩니다.`);
-  } else if (prop.type !== "multi_select") {
-    console.warn(`⚠️ "${PROPERTY_NAME}"는 '${prop.type}' 타입 → 'multi_select'로 변경됩니다.`);
+    // 속성 존재 여부
+    if (!info.properties) {
+      console.error(`❌ DB properties not found for: ${databaseId}`);
+      return false;
+    }
+    
+    const prop = info.properties[PROPERTY_NAME];
+    if (!prop) {
+      console.warn(`⚠️ "${PROPERTY_NAME}" 속성이 없음 → Notion에서 먼저 생성 필요`);
+      return false;
+    } else if (prop.type !== "multi_select") {
+      console.warn(`⚠️ "${PROPERTY_NAME}"는 '${prop.type}' 타입 → 'multi_select'로 변경 필요`);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error(`❌ Preflight failed for DB: ${databaseId}`, error.message || error);
+    return false;
   }
 }
 
 
 async function syncDatabase(databaseId) {
   try {
-    await preflight(databaseId, notion);
+    // Preflight 체크
+    const preflightPassed = await preflight(databaseId, notion);
     
-    // Notion API는 기존 속성만 수정 가능 (새 속성 추가 불가)
-    // 먼저 DB 정보를 가져와서 속성 존재 여부 확인
-    const database = await notion.databases.retrieve({ database_id: databaseId });
-    
-    if (!database.properties[PROPERTY_NAME]) {
-      console.error(`❌ "${PROPERTY_NAME}" 속성이 없습니다. Notion에서 먼저 multi-select 타입으로 생성해주세요.`);
-      return;
-    }
-    
-    if (database.properties[PROPERTY_NAME].type !== "multi_select") {
-      console.error(`❌ "${PROPERTY_NAME}" 속성이 multi-select 타입이 아닙니다. 현재: ${database.properties[PROPERTY_NAME].type}`);
+    if (!preflightPassed) {
+      console.error(`❌ Preflight check failed for DB: ${databaseId}`);
+      console.log(`📝 Please ensure "${PROPERTY_NAME}" property exists as multi-select type in Notion database`);
       return;
     }
     
@@ -71,7 +78,7 @@ async function syncDatabase(databaseId) {
     });
     console.log(`✅ Synced ${options.length} options to DB: ${databaseId}`);
   } catch (error) {
-    console.error(`❌ Failed to sync DB: ${databaseId}`, error.body || error);
+    console.error(`❌ Failed to sync DB: ${databaseId}`, error.body || error.message || error);
   }
 }
 
