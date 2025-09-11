@@ -8,7 +8,7 @@
     { "name": "Swift Concurrency (async/await)", "color": "orange" },
 
     { "name": "Clean Architecture", "color": "green" },
-    { "name": "MVVM", "color": "teal" },
+    { "name": "MVVM", "color": "blue" },
     { "name": "TCA", "color": "red" },
 
     { "name": "URLSession", "color": "blue" },
@@ -17,7 +17,7 @@
     { "name": "REST API", "color": "green" },
     { "name": "Codable", "color": "orange" },
 
-    { "name": "SwiftData", "color": "teal" },
+    { "name": "SwiftData", "color": "green" },
     { "name": "CoreData", "color": "brown" },
     { "name": "UserDefaults", "color": "gray" },
 
@@ -29,10 +29,10 @@
 
     { "name": "SPM", "color": "blue" },
     { "name": "CocoaPods", "color": "red" },
-    { "name": "Tuist", "color": "teal" },
+    { "name": "Tuist", "color": "purple" },
 
     { "name": "Git", "color": "gray" },
-    { "name": "GitHub", "color": "black" },
+    { "name": "GitHub", "color": "gray" },
     { "name": "Bitbucket", "color": "blue" },
     { "name": "GitHub Actions", "color": "green" },
 

@@ -1,1 +1,13 @@
-{ "type": "module" }
+{
+  "name": "personal-repository",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test-local": "node scripts/testLocal.js",
+    "sync": "node scripts/syncTechStack.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.15",
+    "dotenv": "^16.4.5"
+  }
+}
