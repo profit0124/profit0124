@@ -42,15 +42,30 @@ async function preflight(databaseId, notion) {
 
 async function syncDatabase(databaseId) {
   try {
-
-    await preflight(databaseId, notion)
+    await preflight(databaseId, notion);
     
+    // Notion API는 기존 속성만 수정 가능 (새 속성 추가 불가)
+    // 먼저 DB 정보를 가져와서 속성 존재 여부 확인
+    const database = await notion.databases.retrieve({ database_id: databaseId });
+    
+    if (!database.properties[PROPERTY_NAME]) {
+      console.error(`❌ "${PROPERTY_NAME}" 속성이 없습니다. Notion에서 먼저 multi-select 타입으로 생성해주세요.`);
+      return;
+    }
+    
+    if (database.properties[PROPERTY_NAME].type !== "multi_select") {
+      console.error(`❌ "${PROPERTY_NAME}" 속성이 multi-select 타입이 아닙니다. 현재: ${database.properties[PROPERTY_NAME].type}`);
+      return;
+    }
+    
+    // 기존 multi-select 속성의 옵션만 업데이트
     await notion.databases.update({
       database_id: databaseId,
       properties: {
-        "기술스택": {
-          type: "multi_select",
-          multi_select: { options }
+        [PROPERTY_NAME]: {
+          multi_select: { 
+            options: options 
+          }
         }
       }
     });
