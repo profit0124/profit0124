@@ -5,8 +5,8 @@
 ### 📝 Blog
 [![Tistory](https://img.shields.io/badge/Tistory-000000?style=for-the-badge&logo=tistory&logoColor=white)](https://xswift.tistory.com/)
 
-### 📄 Resume * Portfolio
-[![Notion](https://img.shields.io/badge/Notion Page-000000?style=for-the-badge&logo=notion&logoColor=white)](https://www.notion.so/profit0124/iOS-26bbcff0a832808a9f78daf75eb7fcd2?source=copy_link)
+### 📄 Resume & Portfolio
+[![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)](https://www.notion.so/profit0124/iOS-26bbcff0a832808a9f78daf75eb7fcd2?source=copy_link)
 ---
 ## 🧰 Tech Stack
 
