@@ -1,0 +1,26 @@
+name: Notion TechStack Sync
+
+on:
+  workflow_dispatch: {}   # 수동 실행 지원
+  push:
+    paths:
+      - "data/tech-options.json"
+      - "scripts/syncTechStack.js"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - run: npm install @notionhq/client
+
+      - name: Sync TechStack to Notion
+        run: node scripts/syncTechStack.js
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_LIST: ${{ secrets.NOTION_DB_LIST }}

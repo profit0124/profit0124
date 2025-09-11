@@ -1,0 +1,46 @@
+{
+  "기술스택": [
+    { "name": "SwiftUI", "color": "blue" },
+    { "name": "UIKit", "color": "purple" },
+    { "name": "AutoLayout", "color": "yellow" },
+
+    { "name": "Combine", "color": "pink" },
+    { "name": "Swift Concurrency (async/await)", "color": "orange" },
+
+    { "name": "Clean Architecture", "color": "green" },
+    { "name": "MVVM", "color": "teal" },
+    { "name": "TCA", "color": "red" },
+
+    { "name": "URLSession", "color": "blue" },
+    { "name": "Alamofire", "color": "purple" },
+    { "name": "Firebase", "color": "yellow" },
+    { "name": "REST API", "color": "green" },
+    { "name": "Codable", "color": "orange" },
+
+    { "name": "SwiftData", "color": "teal" },
+    { "name": "CoreData", "color": "brown" },
+    { "name": "UserDefaults", "color": "gray" },
+
+    { "name": "MapKit", "color": "blue" },
+    { "name": "CoreLocation", "color": "purple" },
+    { "name": "AVFoundation", "color": "pink" },
+    { "name": "ARKit", "color": "green" },
+    { "name": "StoreKit", "color": "orange" },
+
+    { "name": "SPM", "color": "blue" },
+    { "name": "CocoaPods", "color": "red" },
+    { "name": "Tuist", "color": "teal" },
+
+    { "name": "Git", "color": "gray" },
+    { "name": "GitHub", "color": "black" },
+    { "name": "Bitbucket", "color": "blue" },
+    { "name": "GitHub Actions", "color": "green" },
+
+    { "name": "Jira", "color": "blue" },
+    { "name": "Confluence", "color": "purple" },
+    { "name": "Slack", "color": "pink" },
+    { "name": "Notion", "color": "brown" },
+
+    { "name": "Figma", "color": "yellow" }
+  ]
+}
