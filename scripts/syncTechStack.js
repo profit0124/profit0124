@@ -37,18 +37,37 @@ async function preflight(databaseId, notion) {
       return false;
     }
     
-    const prop = info.properties[PROPERTY_NAME];
-    if (!prop) {
+    // 모든 속성 키 출력 (디버깅용)
+    console.log(`📋 Available properties:`, Object.keys(info.properties));
+    
+    // 속성 이름 정규화 (공백 제거, 대소문자 무시)
+    const normalizedPropName = PROPERTY_NAME.trim();
+    const propertyKeys = Object.keys(info.properties);
+    const matchingKey = propertyKeys.find(key => 
+      key.trim() === normalizedPropName || 
+      key.replace(/\s/g, '') === normalizedPropName.replace(/\s/g, '')
+    );
+    
+    if (!matchingKey) {
       console.warn(`⚠️ "${PROPERTY_NAME}" 속성이 없음 → Notion에서 먼저 생성 필요`);
+      console.log(`   찾은 속성들: ${propertyKeys.join(', ')}`);
       return false;
-    } else if (prop.type !== "multi_select") {
-      console.warn(`⚠️ "${PROPERTY_NAME}"는 '${prop.type}' 타입 → 'multi_select'로 변경 필요`);
+    }
+    
+    const prop = info.properties[matchingKey];
+    console.log(`🔍 Found property "${matchingKey}" with type: ${prop.type}`);
+    
+    if (prop.type !== "multi_select") {
+      console.warn(`⚠️ "${matchingKey}"는 '${prop.type}' 타입 → 'multi_select'로 변경 필요`);
       return false;
     }
     
     return true;
   } catch (error) {
-    console.error(`❌ Preflight failed for DB: ${databaseId}`, error.message || error);
+    console.error(`❌ Preflight failed for DB: ${databaseId}`, error);
+    if (error.body) {
+      console.error(`   Error details:`, error.body);
+    }
     return false;
   }
 }
@@ -56,6 +75,17 @@ async function preflight(databaseId, notion) {
 
 async function syncDatabase(databaseId) {
   try {
+    // DB 정보 가져오기
+    const info = await notion.databases.retrieve({ database_id: databaseId });
+    
+    // 속성 이름 매칭 (공백/대소문자 무시)
+    const normalizedPropName = PROPERTY_NAME.trim();
+    const propertyKeys = Object.keys(info.properties || {});
+    const matchingKey = propertyKeys.find(key => 
+      key.trim() === normalizedPropName || 
+      key.replace(/\s/g, '') === normalizedPropName.replace(/\s/g, '')
+    );
+    
     // Preflight 체크
     const preflightPassed = await preflight(databaseId, notion);
     
@@ -65,20 +95,26 @@ async function syncDatabase(databaseId) {
       return;
     }
     
+    // 실제 속성 키 사용 (찾은 매칭 키 또는 원본)
+    const actualPropertyKey = matchingKey || PROPERTY_NAME;
+    
     // 기존 multi-select 속성의 옵션만 업데이트
     await notion.databases.update({
       database_id: databaseId,
       properties: {
-        [PROPERTY_NAME]: {
+        [actualPropertyKey]: {
           multi_select: { 
             options: options 
           }
         }
       }
     });
-    console.log(`✅ Synced ${options.length} options to DB: ${databaseId}`);
+    console.log(`✅ Synced ${options.length} options to DB: ${databaseId} (property: "${actualPropertyKey}")`);
   } catch (error) {
     console.error(`❌ Failed to sync DB: ${databaseId}`, error.body || error.message || error);
+    if (error.body) {
+      console.error(`   Error details:`, JSON.stringify(error.body, null, 2));
+    }
   }
 }
 
